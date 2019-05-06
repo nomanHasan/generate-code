@@ -1,0 +1,40 @@
+
+if (document && !R) {
+  var el = document.createElement('script');
+  el.src = "https://raw.githubusercontent.com/lodash/lodash/3.10.1/lodash.min.js";
+  el.type = "text/javascript";
+  document.head.appendChild(el);  
+}
+
+
+
+const GenerateCode = (modelName, model) => {
+  const props = Object.keys(model).map(key => {
+    return {
+      propName: key,
+      defaultValue: defaultValue(model[key])
+    };
+  });
+
+  console.log(props);
+
+  return `
+    const create${modelName} = ({
+      ${props.map(prop => `${prop.propName} = ${prop.defaultValue}`).join(',\n\t  ')}
+    }) => {
+      return {
+        ${props.map(prop => `${prop.propName}`).join(',\n\t    ')}
+      }
+    };
+
+  `
+};
+
+const defaultValue = (obj) => {
+  return R.is(String, obj) ? `''` : (
+    R.is(Number, obj) ? 0 : (
+      R.is(Date, obj) ? new Date() : (
+        R.is(Array, obj) ? [] : undefined 
+      )
+    ))
+};
